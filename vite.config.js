@@ -2,14 +2,24 @@ import { defineConfig } from 'vite';
 import { resolve } from 'path';
 import { viteConvertPugInHtml } from '@mish.dev/vite-convert-pug-in-html';
 import inject from '@rollup/plugin-inject';
+const isProd = process.env.NODE_ENV === 'production' ? 'production' : 'development';
+const basePath = isProd === 'production' ? '/bibook-pug-sass-jquery-vitejs/' : '/';
+const injectConfig = isProd === 'production' ? {
+  $: 'jquery',
+  jQuery: 'jquery',
+  'window.jQuery': 'jquery',
+  include: '**/*.js'
+} : {
+  $: 'jquery',
+  jQuery: 'jquery',
+  'window.jQuery': 'jquery'
+};
+
 
 export default defineConfig({
+  base: basePath,
   plugins: [viteConvertPugInHtml(),
-    inject({
-      $: 'jquery',
-      jQuery: 'jquery',
-      'window.jQuery': 'jquery',
-    })
+  inject(injectConfig)
   ],
   root: 'src',
   resolve: {
@@ -20,7 +30,7 @@ export default defineConfig({
   },
   build: {
     minify: false,
-    outDir: '../dist',
+    outDir: '../docs',
     emptyOutDir: true,
     cssCodeSplit: true,
     assetsDir: 'assets',
